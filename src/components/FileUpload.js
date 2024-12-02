@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
 
-const FileUpload = ({ onDataLoaded }) => {
+const FileUpload = ({ onDataLoaded, onProductsExtracted }) => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -13,7 +13,14 @@ const FileUpload = ({ onDataLoaded }) => {
       Papa.parse(file, {
         header: true,
         complete: (results) => {
-          onDataLoaded(results.data);
+          const data = results.data;
+          onDataLoaded(data);
+
+          // Extract unique products
+          const uniqueProducts = [
+            ...new Set(data.map((row) => row.product_description)),
+          ];
+          onProductsExtracted(uniqueProducts);
         },
       });
     }
